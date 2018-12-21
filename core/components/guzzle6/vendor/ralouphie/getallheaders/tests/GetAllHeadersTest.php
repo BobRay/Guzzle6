@@ -1,5 +1,7 @@
 <?php
 
+include '../../../autoload.php';
+
 class GetAllHeadersTest extends \PHPUnit_Framework_TestCase
 {
 
