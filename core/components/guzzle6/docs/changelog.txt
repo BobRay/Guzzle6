@@ -1,0 +1,5 @@
+Changelog for Guzzle6
+
+Guzzle6 1.0.0
+---------------------------------
+Initial Version
