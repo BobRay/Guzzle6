@@ -6,4 +6,6 @@ Guzzle6 Extra for MODx Revolution
 
 Documentation is available at [Bob's Guides](https://bobsguides.com/guzzle6-tutorial.html)
 
-Guzzle6 project for MyComponent extra
+The Guzzle6 extra installs Guzzle 6 to your MODX install. 
+
+See the documentation at the link above for information and examples of how to use Guzzle 6. 
