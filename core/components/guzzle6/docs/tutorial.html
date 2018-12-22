@@ -173,7 +173,6 @@ public function getRawVersions($url, $githubTimeout = 6,
 
 <p>The <code>$certPath</code> setting is rarely necessary. It allows you to tell Guzzle where the certification file (in .pem format) is located by giving it the full path to the file. Guzzle looks in several places for the file and is very good at finding the server's SSL certification file without the setting. If it can't be found, usually the server admin can put it in a more traditional place, but you can also tell Guzzle where it is with this setting.</p>
 
-<p>The </p>
 
 <br>
 <h3>See if a Remote URL exists</h3>
@@ -219,7 +218,7 @@ public function remoteFileExists($url) {
 public function download($url, $destinationPath) {
 
     /* See if the file is available for download */
-    if (!$this->remoteFileExists()) {
+    if (!$this->remoteFileExists($url)) {
         throw new Exception($this->modx->lexicon('ugm_no_such_version'));
     }
 
@@ -276,6 +275,7 @@ public function download($url, $destinationPath) {
 
 </fixedpre></pre>
 
+<p>The code above may throw an exception, so it should always be called inside a <code>try</code> block with an associated <code>catch</code>block.</p>
 
 <p>&nbsp;</p>
 
