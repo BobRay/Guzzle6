@@ -17,7 +17,7 @@ Go to System | Package Management on the main menu in the MODX Manager and click
 
 <p>For any code that uses Guzzle, you should include some version of these lines at the very top of your code (just below the PHP tag):</p>
 
-<pre><fixedpre>
+<pre class="brush: php; toolbar: false;"><fixedpre>
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 /* Include these if you need Psr7 support */
@@ -26,7 +26,8 @@ use GuzzleHttp\Exception\ClientException;
 
 /* This next line can go anywhere, as long as it's above any code that uses Guzzle */
 
-require_once MODX_CORE_PATH . 'components/guzzle6/vendor/autoload.php';
+require_once MODX_CORE_PATH .
+    'components/guzzle6/vendor/autoload.php';
 </fixedpre></pre>
 
 <p>Once you've included the lines above you can use any Guzzle 6 features. There are some examples below, but you can also consult the <a href="//docs.guzzlephp.org/en/stable/">Guzzle Documentation</a>.</p>
@@ -36,13 +37,14 @@ require_once MODX_CORE_PATH . 'components/guzzle6/vendor/autoload.php';
 
 <p>This will get the content from a web page or URL and echo it to the screen:</p>
 
-<pre><fixedpre>
+<pre class="brush: php; toolbar: false;"><fixedpre>
 $client = new \GuzzleHttp\Client();
 $url = '//api.github.com/repos/modxcms/revolution/tags';
 $response = $client->request('GET', $url);
 echo $response->getBody();
 </fixedpre></pre>
 
+<br>
 <div class="box">
  <p>Important: The examples below are inside a class. They will need to be modified if you use them outside of a
   class.</p>
@@ -51,9 +53,9 @@ echo $response->getBody();
 <br>
 <h3>Parsing Guzzle Errors</h3>
 
-<p>Before we get to the more rest of the examples, this is a handy function I created for parsing messages from Guzzle exceptions:</p>
+<p>Before we get to the rest of the examples, this is a handy function I created for parsing messages from Guzzle exceptions:</p>
 
-<pre><fixedpre>
+<pre class="brush: php; toolbar: false;"><fixedpre>
 
  /**
  * Creates beautified error message based on
@@ -67,7 +69,8 @@ echo $response->getBody();
 public function parseException($e, $verbose = false) {
     /** @var  $response \Psr\Http\Message\MessageInterface */
     $msg = $e->getMessage();
-    $prefix = $this->modx->lexicon('ugm_no_version_list_from_github') . ' -- ';
+    $prefix = $this->modx->lexicon('ugm_no_version_list_from_github')
+        . ' -- ';
     $retVal = $msg; // default to entire message;
     $code = $e->getCode();
 
@@ -83,10 +86,14 @@ public function parseException($e, $verbose = false) {
             $retVal = $code . ' ' . $ex['message'];
         }
     } elseif (empty($code) || ($code >= 500)) {
-        $code = ((int) $code === 0) ? 'No Code Returned' : $code;
-        $retVal = $code . ' ' . 'Connection error (no internet?)';
+        $code = ((int) $code === 0)
+            ? 'No Code Returned'
+            : $code;
+        $retVal = $code . ' ' .
+            'Connection error (no internet?)';
     }
-    $retVal = $verbose? $prefix . ' ' . $msg : $prefix . $retVal;
+    $retVal = $verbose? $prefix . ' ' .
+        $msg : $prefix . $retVal;
     return $retVal;
 }
 </fixedpre></pre>
@@ -97,7 +104,7 @@ public function parseException($e, $verbose = false) {
 
 <p>This method is a little more complex, since it gets data from GitHub, and has options for the API response, authentication, exception handling, and SSL verification:</p>
 
-<pre><fixedpre>
+<pre class="brush: php; toolbar: false;"><fixedpre>
 /**
  * * Gets raw JSON version list from GitHub
  *  Long param list is mainly for unit tests
@@ -113,24 +120,30 @@ public function parseException($e, $verbose = false) {
  * @param bool $verbose -- show verbose error messages
  *
  *
- * @return mixed returns JSON version list as string or false on failure
+ * @return mixed returns JSON version list
+    as string or false on failure
  */
-public function getRawVersions($url, $githubTimeout = 6, $verifyPeer = true,
-        $githubUsername = null, $githubToken = null, $certPath = null,
+public function getRawVersions($url, $githubTimeout = 6,
+        $verifyPeer = true,  $githubUsername = null,
+        $githubToken = null, $certPath = null,
         $verbose = false) {
+
     /* Create the client */
     $this->client = new \GuzzleHttp\Client();
 
     $options = array();
-    if ((!empty($githubUsername)) && (!empty($githubToken))) { // use token if set
+    /* User GitHub credentials if we have them
+    if ((!empty($githubUsername)) && (!empty($githubToken))) {
         $options['auth'] = array($githubUsername, $githubToken);
     }
     $options['header'] = array (
         'Cache-Control' => 'no-cache',
         'Accept' => 'application/json',
     );
+    /* Optional Path to .pem file for SSL
+       Usually not necessary */
     if (!empty ($certPath))  {
-        $options['cert'] = $this->certPath;
+        $options['cert'] = $certPath;
     }
 
     $options['timeout'] = $githubTimeout;
@@ -140,7 +153,8 @@ public function getRawVersions($url, $githubTimeout = 6, $verifyPeer = true,
     }
 
     try {
-        $response = $this->client->request('GET', $url, $options);
+        $response = $this->client->request('GET',
+            $url, $options);
         $retVal = $response->getBody();
     } catch (RequestException $e) {
         $msg = $this->parseException($e, $verbose);
@@ -157,6 +171,10 @@ public function getRawVersions($url, $githubTimeout = 6, $verifyPeer = true,
 
 <p>Rather than have so many arguments, the method above could easily use class variables set elsewhere in the class (say, in the initialization() method). The multiple arguments make the method's behavior easier to test with unit tests.</p>
 
+<p>The <code>$certPath</code> setting is rarely necessary. It allows you to tell Guzzle where the certification file (in .pem format) is located by giving it the full path to the file. Guzzle looks in several places for the file and is very good at finding the server's SSL certification file without the setting. If it can't be found, usually the server admin can put it in a more traditional place, but you can also tell Guzzle where it is with this setting.</p>
+
+<p>The </p>
+
 <br>
 <h3>See if a Remote URL exists</h3>
 
@@ -164,7 +182,7 @@ public function getRawVersions($url, $githubTimeout = 6, $verifyPeer = true,
 
 <p>It's handy for use in a link checker. UpgradeMODX uses it to make sure the MODX .zip file is available before downloading it.</p>
 
-<pre><fixedpre>
+<pre class="brush: php; toolbar: false;"><fixedpre>
 public function remoteFileExists($url) {
         /** @var $client GuzzleHttp\Client */
         $client = $this->client;
@@ -173,49 +191,56 @@ public function remoteFileExists($url) {
             $client->head($url);
             return true;
         } catch (GuzzleHttp\Exception\ClientException $e) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, 'Request Failed: ' . $this->parseException($e));
+            $this->modx->log(modX::LOG_LEVEL_ERROR,
+                'Request Failed: ' . $this->parseException($e));
             return false;
         } catch (/Exception $e) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, 'Request Failed: ' . $this->parseException($e));
+            $this->modx->log(modX::LOG_LEVEL_ERROR,
+                'Request Failed: ' . $this->parseException($e));
             return false;
         }
     }
 </fixedpre></pre>
 
+<p>Notice that there is a second <code>catch</code> block using to catch regular exceptions using <code>catch (/Exception</code>) in case of 500-level errors, or a failed internet connection.</p>
 
 <br>
 <h3>Downloading a File</h3>
 
 <p>This method downloads a .zip file from a URL. In this case the <code>$options</code> argument is required, since it tells Guzzle where to put the downloaded file. The method also shows an example of catching an exception, then throwing a new one that can be caught in the method that calls this one. I also throws its own exception if the file if the downloaded file is empty.</p>
 
-<pre><fixedpre>
+<pre class="brush: php; toolbar: false;"><fixedpre>
 /** @throws Exception
 * @throws GuzzleException
+* @param $url string - URL to download fro
+* @param $destinationPath - full path to save file
 */
 
-public function download() {
+public function download($url, $destinationPath) {
 
     /* See if the file is available for download */
-    if (!$this->remoteFilexists()) {
+    if (!$this->remoteFileExists()) {
         throw new Exception($this->modx->lexicon('ugm_no_such_version'));
     }
 
     $client = $this->client;
-    $destFile = fopen($this->destinationPath, 'w');
+    $destFile = fopen($destinationPath, 'w');
     if (!$destFile) {
         $msg = '[Download Files Processor] ' .
             $this->modx->lexicon('ugm_could_not_open') . ' ' .
-            $this->destinationPath . ' ' . $this->modx->lexicon('ugm_for_writing');
+            $this->destinationPath . ' ' .
+                $this->modx->lexicon('ugm_for_writing');
         throw new Exception($msg);
 
     }
 
     set_time_limit(0);
     $options = array(
-        RequestOptions::SINK => $destFile, // the body of a response
-        RequestOptions::CONNECT_TIMEOUT => $this->modxTimeout,    // request
+       /* where to put the body of a response */
+        RequestOptions::SINK => $destFile,
+        RequestOptions::CONNECT_TIMEOUT => $this->modxTimeout,
         RequestOptions::VERIFY => (bool) $this->sslVerifyPeer,
-       // RequestOptions::TIMEOUT => 0.0,    // response
+       // RequestOptions::TIMEOUT => 0.0,
     );
 
     if (!empty($this->certPath)) {
@@ -228,11 +253,12 @@ public function download() {
     );
 
     try {
-        $response = $client->request('GET', $this->sourceUrl, $options);
+        $response = $client->request('GET', $url, $options);
     } catch (Exception $e) {
         fclose($destFile);
-        unlink($this->destinationPath);
-        throw new exception($this->modx->lexicon('ugm_download_failed') . ' -- ' . $e->getMessage());
+        unlink($destinationPath);
+        throw new exception($this->modx->lexicon('ugm_download_failed') .
+            ' -- ' . $e->getMessage());
     }
 
     fclose($destFile);
@@ -241,8 +267,9 @@ public function download() {
         throw new exception($this->modx->lexicon('ugm_download_failed')
             . ' Filesize: 0');
     } else {
-        $msg = $this->modx->lexicon('ugm_downloaded') . ' ' . $_SESSION['ugm_version'] .
-            ' -> ' . $this->destinationPath;
+        $msg = $this->modx->lexicon('ugm_downloaded') . ' ' .
+            $_SESSION['ugm_version'] .
+            ' -> ' . $destinationPath;
         echo $msg;
     }
 }

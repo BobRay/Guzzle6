@@ -1,5 +1,6 @@
 Changelog for Guzzle6
 
-Guzzle6 1.0.0
+Guzzle6 1.0.1-pl
 ---------------------------------
-Initial Version
+Package Guzzle 6.3.3
+Initial Release
