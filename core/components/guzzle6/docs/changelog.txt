@@ -1,5 +1,9 @@
 Changelog for Guzzle6
 
+Guzzle6 1.0.3-pl
+---------------------------------
+ - Fix critical security issue in psr7 library
+
 Guzzle6 1.0.1-pl
 ---------------------------------
 Package Guzzle 6.3.3
