@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => '18c3a5252944eab5a02a1bfe8196c5f0e6945b81',
+    'reference' => '0cb29343b14e6d6ca7c27fce1198ebfc5920ca8a',
     'name' => '__root__',
   ),
   'versions' => 
@@ -18,16 +18,16 @@
       'aliases' => 
       array (
       ),
-      'reference' => '18c3a5252944eab5a02a1bfe8196c5f0e6945b81',
+      'reference' => '0cb29343b14e6d6ca7c27fce1198ebfc5920ca8a',
     ),
     'guzzlehttp/guzzle' => 
     array (
-      'pretty_version' => '6.5.6',
-      'version' => '6.5.6.0',
+      'pretty_version' => '6.5.7',
+      'version' => '6.5.7.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'f092dd734083473658de3ee4bef093ed77d2689c',
+      'reference' => '724562fa861e21a4071c652c8a159934e4f05592',
     ),
     'guzzlehttp/promises' => 
     array (
